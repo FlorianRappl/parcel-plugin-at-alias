@@ -17,9 +17,11 @@ function combineAliasFileName(aliases, file) {
   return aliases[file];
 }
 
+let original;
+
 module.exports = function(bundler) {
   const resolver = bundler.resolver;
-  const gA = resolver.__proto__.getAlias;
+  const getAlias = original || (original = resolver.__proto__.getAlias);
 
   resolver.__proto__.getAlias = function(filename, dir, aliases) {
     if (aliases && filename.startsWith("@")) {
@@ -30,6 +32,6 @@ module.exports = function(bundler) {
       }
     }
 
-    return gA.call(resolver, filename, dir, aliases);
+    return getAlias.call(resolver, filename, dir, aliases);
   };
 };
